@@ -30,3 +30,5 @@ mysql-connector-j-*.jar
 
 # Personal configuration files
 config.properties
+
+*.bat
