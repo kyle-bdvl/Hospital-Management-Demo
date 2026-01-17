@@ -1,6 +1,7 @@
 package com.hospital.ui;
 
 import com.hospital.model.Patient;
+import com.hospital.util.ValidationUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -175,39 +176,52 @@ public class PatientDialog extends JDialog {
     }
     
     private boolean validateAndSave() {
-        // Validate required fields
-        if (nameField.getText().trim().isEmpty()) {
-            showError("Name is required.");
+        // CR-001: Clear all previous error highlights
+        ValidationUtil.clearAllErrors(nameField, ageField, phoneField, emailField);
+        
+        // CR-001: Validate required fields with visual feedback
+        String error;
+        
+        error = ValidationUtil.validateRequired(nameField, "Name");
+        if (error != null) {
+            showError(error);
             nameField.requestFocus();
             return false;
         }
         
-        if (ageField.getText().trim().isEmpty()) {
-            showError("Age is required.");
+        // CR-001: Validate age with range check
+        error = ValidationUtil.validateAge(ageField, 0, 150);
+        if (error != null) {
+            showError(error);
             ageField.requestFocus();
             return false;
         }
         
-        if (phoneField.getText().trim().isEmpty()) {
-            showError("Phone is required.");
+        error = ValidationUtil.validateRequired(phoneField, "Phone");
+        if (error != null) {
+            showError(error);
             phoneField.requestFocus();
             return false;
         }
         
-        // Validate age
-        int age;
-        try {
-            age = Integer.parseInt(ageField.getText().trim());
-            if (age < 0 || age > 150) {
-                showError("Please enter a valid age (0-150).");
-                ageField.requestFocus();
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            showError("Please enter a valid age.");
-            ageField.requestFocus();
+        // CR-001: Validate phone format (10-15 digits)
+        error = ValidationUtil.validatePhone(phoneField);
+        if (error != null) {
+            showError(error);
+            phoneField.requestFocus();
             return false;
         }
+        
+        // CR-001: Validate email format if provided
+        error = ValidationUtil.validateEmail(emailField);
+        if (error != null) {
+            showError(error);
+            emailField.requestFocus();
+            return false;
+        }
+        
+        // Get validated age value
+        int age = Integer.parseInt(ageField.getText().trim());
         
         // Validate admission date
         LocalDate admissionDate;
