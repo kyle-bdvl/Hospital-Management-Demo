@@ -1,6 +1,7 @@
 package com.hospital;
 
 import com.hospital.ui.LoginFrame;
+import com.hospital.util.ErrorHandler;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -11,13 +12,12 @@ import javax.swing.UIManager;
 public class Main {
     public static void main(String[] args) {
         try {
-            // Set system look and feel for better UI
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            e.printStackTrace();
+            // bootstrap errors: console only (no dialog)
+            ErrorHandler.console("Failed to set system Look & Feel.", e);
         }
-        
-        // Launch the application on EDT
+
         SwingUtilities.invokeLater(() -> {
             new LoginFrame().setVisible(true);
         });
