@@ -1,6 +1,7 @@
 package com.hospital.ui;
 
 import com.hospital.model.Doctor;
+import com.hospital.util.ValidationUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -181,9 +182,15 @@ public class DoctorDialog extends JDialog {
     }
     
     private boolean validateAndSave() {
-        // Validate required fields
-        if (nameField.getText().trim().isEmpty()) {
-            showError("Name is required.");
+        // CR-001: Clear all previous error highlights
+        ValidationUtil.clearAllErrors(nameField, phoneField, emailField, experienceField, feeField);
+        
+        // CR-001: Validate required fields with visual feedback
+        String error;
+        
+        error = ValidationUtil.validateRequired(nameField, "Name");
+        if (error != null) {
+            showError(error);
             nameField.requestFocus();
             return false;
         }
@@ -195,9 +202,26 @@ public class DoctorDialog extends JDialog {
             return false;
         }
         
-        if (phoneField.getText().trim().isEmpty()) {
-            showError("Phone is required.");
+        error = ValidationUtil.validateRequired(phoneField, "Phone");
+        if (error != null) {
+            showError(error);
             phoneField.requestFocus();
+            return false;
+        }
+        
+        // CR-001: Validate phone format (10-15 digits)
+        error = ValidationUtil.validatePhone(phoneField);
+        if (error != null) {
+            showError(error);
+            phoneField.requestFocus();
+            return false;
+        }
+        
+        // CR-001: Validate email format if provided
+        error = ValidationUtil.validateEmail(emailField);
+        if (error != null) {
+            showError(error);
+            emailField.requestFocus();
             return false;
         }
         
