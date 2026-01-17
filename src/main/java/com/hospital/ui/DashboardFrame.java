@@ -20,6 +20,7 @@ public class DashboardFrame extends JFrame {
     private JLabel welcomeLabel;
     private JLabel timeLabel;
     private Timer timeTimer;
+    private Timer statsTimer; // Add this field at the top with other timers
     
     // Statistics panels
     private JLabel totalPatientsLabel;
@@ -42,6 +43,14 @@ public class DashboardFrame extends JFrame {
         setupEventHandlers();
         updateStatistics();
         startTimeUpdater();
+        
+        // Refresh when window gains focus
+        addWindowFocusListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowGainedFocus(java.awt.event.WindowEvent e) {
+                updateStatistics();
+            }
+        });
         
         setTitle("Hospital Management System - Dashboard");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -352,6 +361,15 @@ public class DashboardFrame extends JFrame {
         });
         timeTimer.start();
         
+        // Auto-refresh statistics every 5 seconds
+        statsTimer = new Timer(5000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateStatistics();
+            }
+        });
+        statsTimer.start();
+        
         // Initial update
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy - HH:mm:ss");
@@ -362,6 +380,9 @@ public class DashboardFrame extends JFrame {
     public void dispose() {
         if (timeTimer != null) {
             timeTimer.stop();
+        }
+        if (statsTimer != null) {
+            statsTimer.stop();
         }
         super.dispose();
     }
