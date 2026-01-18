@@ -3,320 +3,200 @@ package com.hospital.ui;
 import com.hospital.dao.PatientDAO;
 import com.hospital.model.Patient;
 import com.hospital.model.User;
-
+import java.awt.*;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.time.LocalDate;
-import java.util.List;
 
-/**
- * Patient Management Frame
- */
 public class PatientManagementFrame extends JFrame {
-    private User currentUser;
     private PatientDAO patientDAO;
     private JTable patientTable;
     private DefaultTableModel tableModel;
     private JTextField searchField;
     private JButton addButton, editButton, deleteButton, refreshButton;
     
+    // Pagination Variables
+    private int currentPage = 1;
+    private final int PAGE_SIZE = 10;
+    private int totalRecords = 0;
+    private JLabel pageInfoLabel;
+    private JButton prevButton, nextButton;
+
     public PatientManagementFrame(User user) {
-        this.currentUser = user;
         this.patientDAO = new PatientDAO();
-        
         initializeComponents();
         setupLayout();
         setupEventHandlers();
-        loadPatients();
+        loadPatients(); // Initial paginated load
         
         setTitle("Patient Management");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
     }
-    
+
     private void initializeComponents() {
-        // Table setup
-        String[] columnNames = {"ID", "Name", "Age", "Gender", "Phone", "Email", "Disease", "Blood Group", "Admission Date"};
-        tableModel = new DefaultTableModel(columnNames, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
+        String[] cols = {"ID", "Name", "Age", "Gender", "Phone", "Email", "Disease", "Blood Group", "Admission Date"};
+        tableModel = new DefaultTableModel(cols, 0) {
+            @Override public boolean isCellEditable(int r, int c) { return false; }
         };
-        
         patientTable = new JTable(tableModel);
-        patientTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         patientTable.setRowHeight(25);
-        patientTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
-        patientTable.setFont(new Font("Arial", Font.PLAIN, 12));
-        
-        // Search field
         searchField = new JTextField(20);
-        searchField.setFont(new Font("Arial", Font.PLAIN, 14));
-        
-        // Buttons
+
         addButton = createStyledButton("Add Patient", new Color(40, 167, 69));
         editButton = createStyledButton("Edit Patient", new Color(0, 123, 255));
         deleteButton = createStyledButton("Delete Patient", new Color(220, 53, 69));
         refreshButton = createStyledButton("Refresh", new Color(108, 117, 125));
+
+        prevButton = new JButton("Previous");
+        nextButton = new JButton("Next");
+        pageInfoLabel = new JLabel("Page 1");
+        pageInfoLabel.setFont(new Font("Arial", Font.BOLD, 12));
     }
-    
-    private JButton createStyledButton(String text, Color color) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Arial", Font.BOLD, 12));
-        button.setBackground(color);
-        button.setForeground(Color.WHITE);
-        button.setFocusPainted(false);
-        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        button.setOpaque(true);
-        button.setBorderPainted(false);
-        return button;
-    }
-    
+
     private void setupLayout() {
         setLayout(new BorderLayout());
-        
-        // Header Panel
+
+        // Header
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(new Color(0, 123, 255));
         headerPanel.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
-        
         JLabel titleLabel = new JLabel("Patient Management");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
         titleLabel.setForeground(Color.WHITE);
-        
         headerPanel.add(titleLabel, BorderLayout.WEST);
-        
-        // Search Panel
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        searchPanel.setBackground(Color.WHITE);
-        searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        
-        JLabel searchLabel = new JLabel("Search:");
-        searchLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        
-        JButton searchButton = createStyledButton("Search", new Color(23, 162, 184));
-        
-        searchPanel.add(searchLabel);
-        searchPanel.add(searchField);
-        searchPanel.add(searchButton);
-        
-        // Button Panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.setBackground(Color.WHITE);
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        
-        buttonPanel.add(addButton);
-        buttonPanel.add(editButton);
-        buttonPanel.add(deleteButton);
-        buttonPanel.add(refreshButton);
-        
-        // Top Panel combining search and buttons
+
+        // Control Panel
         JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.add(searchPanel, BorderLayout.WEST);
-        topPanel.add(buttonPanel, BorderLayout.EAST);
-        
-        // Table Panel
-        JScrollPane scrollPane = new JScrollPane(patientTable);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 20, 20, 20));
-        
+        JPanel searchBar = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchBar.add(new JLabel("Search: "));
+        searchBar.add(searchField);
+        JButton searchBtn = new JButton("Search");
+        searchBtn.addActionListener(e -> searchPatients());
+        searchBar.add(searchBtn);
+
+        JPanel actionPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        actionPanel.add(addButton);
+        actionPanel.add(editButton);
+        actionPanel.add(deleteButton);
+        actionPanel.add(refreshButton);
+
+        topPanel.add(searchBar, BorderLayout.WEST);
+        topPanel.add(actionPanel, BorderLayout.EAST);
+
+        // Pagination Bar
+        JPanel paginationPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        paginationPanel.add(prevButton);
+        paginationPanel.add(pageInfoLabel);
+        paginationPanel.add(nextButton);
+
         add(headerPanel, BorderLayout.NORTH);
-        add(topPanel, BorderLayout.CENTER);
-        add(scrollPane, BorderLayout.SOUTH);
+        add(topPanel, BorderLayout.CENTER); // Using BorderLayout.CENTER for the top controls and table
         
-        // Search button event
-        searchButton.addActionListener(e -> searchPatients());
+        JPanel centerContainer = new JPanel(new BorderLayout());
+        centerContainer.add(topPanel, BorderLayout.NORTH);
+        centerContainer.add(new JScrollPane(patientTable), BorderLayout.CENTER);
+        centerContainer.add(paginationPanel, BorderLayout.SOUTH);
         
-        // Enter key search
-        searchField.addActionListener(e -> searchPatients());
+        add(centerContainer, BorderLayout.CENTER);
     }
-    
+
     private void setupEventHandlers() {
-        addButton.addActionListener(e -> openAddPatientDialog());
-        editButton.addActionListener(e -> openEditPatientDialog());
-        deleteButton.addActionListener(e -> deleteSelectedPatient());
-        refreshButton.addActionListener(e -> loadPatients());
+        addButton.addActionListener(e -> openAddDialog());
+        editButton.addActionListener(e -> openEditDialog());
+        deleteButton.addActionListener(e -> deletePatient());
+        refreshButton.addActionListener(e -> { currentPage = 1; loadPatients(); });
+
+        prevButton.addActionListener(e -> {
+            if (currentPage > 1) {
+                currentPage--;
+                loadPatients();
+            }
+        });
+
+        nextButton.addActionListener(e -> {
+            int maxPage = (int) Math.ceil((double) totalRecords / PAGE_SIZE);
+            if (currentPage < maxPage) {
+                currentPage++;
+                loadPatients();
+            }
+        });
     }
-    
+
     private void loadPatients() {
         SwingUtilities.invokeLater(() -> {
-            try {
-                tableModel.setRowCount(0);
-                List<Patient> patients = patientDAO.getAllPatients();
-                
-                for (Patient patient : patients) {
-                    Object[] row = {
-                        patient.getPatientId(),
-                        patient.getName(),
-                        patient.getAge(),
-                        patient.getGender(),
-                        patient.getPhone(),
-                        patient.getEmail(),
-                        patient.getDisease(),
-                        patient.getBloodGroup(),
-                        patient.getAdmissionDate()
-                    };
-                    tableModel.addRow(row);
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, 
-                    "Error loading patients: " + e.getMessage(), 
-                    "Database Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
+            totalRecords = patientDAO.getTotalPatientCount();
+            int offset = (currentPage - 1) * PAGE_SIZE;
+            List<Patient> list = patientDAO.getPatientsPaginated(PAGE_SIZE, offset);
+            
+            tableModel.setRowCount(0);
+            for (Patient p : list) {
+                tableModel.addRow(new Object[]{
+                    p.getPatientId(), p.getName(), p.getAge(), p.getGender(), 
+                    p.getPhone(), p.getEmail(), p.getDisease(), p.getBloodGroup(), p.getAdmissionDate()
+                });
             }
+            
+            int totalPages = (int) Math.ceil((double) totalRecords / PAGE_SIZE);
+            if (totalPages == 0) totalPages = 1;
+            pageInfoLabel.setText("Page " + currentPage + " of " + totalPages);
+            prevButton.setEnabled(currentPage > 1);
+            nextButton.setEnabled(currentPage < totalPages);
         });
     }
-    
+
     private void searchPatients() {
-        String searchTerm = searchField.getText().trim();
+        String term = searchField.getText().trim();
+        if (term.isEmpty()) { loadPatients(); return; }
         
-        if (searchTerm.isEmpty()) {
-            loadPatients();
-            return;
+        List<Patient> results = patientDAO.searchPatients(term);
+        tableModel.setRowCount(0);
+        for (Patient p : results) {
+            tableModel.addRow(new Object[]{p.getPatientId(), p.getName(), p.getAge(), p.getGender(), p.getPhone(), p.getEmail(), p.getDisease(), p.getBloodGroup(), p.getAdmissionDate()});
         }
-        
-        SwingUtilities.invokeLater(() -> {
-            try {
-                tableModel.setRowCount(0);
-                List<Patient> patients = patientDAO.searchPatients(searchTerm);
-                
-                for (Patient patient : patients) {
-                    Object[] row = {
-                        patient.getPatientId(),
-                        patient.getName(),
-                        patient.getAge(),
-                        patient.getGender(),
-                        patient.getPhone(),
-                        patient.getEmail(),
-                        patient.getDisease(),
-                        patient.getBloodGroup(),
-                        patient.getAdmissionDate()
-                    };
-                    tableModel.addRow(row);
-                }
-                
-                if (patients.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, 
-                        "No patients found matching: " + searchTerm, 
-                        "Search Results", JOptionPane.INFORMATION_MESSAGE);
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, 
-                    "Error searching patients: " + e.getMessage(), 
-                    "Database Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-            }
-        });
+        pageInfoLabel.setText("Search Results (" + results.size() + ")");
+        prevButton.setEnabled(false);
+        nextButton.setEnabled(false);
     }
-    
-    private void openAddPatientDialog() {
-        PatientDialog dialog = new PatientDialog(this, "Add New Patient", null);
-        dialog.setVisible(true);
-        
-        if (dialog.isConfirmed()) {
-            Patient patient = dialog.getPatient();
-            try {
-                if (patientDAO.addPatient(patient)) {
-                    JOptionPane.showMessageDialog(this, 
-                        "Patient added successfully!", 
-                        "Success", JOptionPane.INFORMATION_MESSAGE);
-                    loadPatients();
-                } else {
-                    JOptionPane.showMessageDialog(this, 
-                        "Failed to add patient.", 
-                        "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, 
-                    "Error adding patient: " + e.getMessage(), 
-                    "Database Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
+
+    private JButton createStyledButton(String text, Color color) {
+        JButton b = new JButton(text);
+        b.setBackground(color);
+        b.setForeground(Color.WHITE);
+        b.setOpaque(true);
+        b.setBorderPainted(false);
+        return b;
+    }
+
+    private void openAddDialog() {
+        PatientDialog d = new PatientDialog(this, "Add Patient", null);
+        d.setVisible(true);
+        if (d.isConfirmed() && patientDAO.addPatient(d.getPatient())) loadPatients();
+    }
+
+    private void openEditDialog() {
+        int row = patientTable.getSelectedRow();
+        if (row == -1) return;
+        int id = (int) tableModel.getValueAt(row, 0);
+        Patient p = patientDAO.getPatientById(id);
+        if (p != null) {
+            PatientDialog d = new PatientDialog(this, "Edit Patient", p);
+            d.setVisible(true);
+            if (d.isConfirmed()) {
+                Patient up = d.getPatient();
+                up.setPatientId(id);
+                if (patientDAO.updatePatient(up)) loadPatients();
             }
         }
     }
-    
-    private void openEditPatientDialog() {
-        int selectedRow = patientTable.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, 
-                "Please select a patient to edit.", 
-                "No Selection", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        int patientId = (Integer) tableModel.getValueAt(selectedRow, 0);
-        
-        try {
-            Patient patient = patientDAO.getPatientById(patientId);
-            if (patient != null) {
-                PatientDialog dialog = new PatientDialog(this, "Edit Patient", patient);
-                dialog.setVisible(true);
-                
-                if (dialog.isConfirmed()) {
-                    Patient updatedPatient = dialog.getPatient();
-                    updatedPatient.setPatientId(patientId);
-                    
-                    if (patientDAO.updatePatient(updatedPatient)) {
-                        JOptionPane.showMessageDialog(this, 
-                            "Patient updated successfully!", 
-                            "Success", JOptionPane.INFORMATION_MESSAGE);
-                        loadPatients();
-                    } else {
-                        JOptionPane.showMessageDialog(this, 
-                            "Failed to update patient.", 
-                            "Error", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, 
-                "Error editing patient: " + e.getMessage(), 
-                "Database Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
-    }
-    
-    private void deleteSelectedPatient() {
-        int selectedRow = patientTable.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, 
-                "Please select a patient to delete.", 
-                "No Selection", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        String patientName = (String) tableModel.getValueAt(selectedRow, 1);
-        int patientId = (Integer) tableModel.getValueAt(selectedRow, 0);
-        
-        int choice = JOptionPane.showConfirmDialog(this, 
-            "Are you sure you want to delete patient: " + patientName + "?", 
-            "Delete Confirmation", 
-            JOptionPane.YES_NO_OPTION, 
-            JOptionPane.WARNING_MESSAGE);
-        
-        if (choice == JOptionPane.YES_OPTION) {
-            try {
-                if (patientDAO.deletePatient(patientId)) {
-                    JOptionPane.showMessageDialog(this, 
-                        "Patient deleted successfully!", 
-                        "Success", JOptionPane.INFORMATION_MESSAGE);
-                    loadPatients();
-                } else {
-                    JOptionPane.showMessageDialog(this, 
-                        "Failed to delete patient.", 
-                        "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, 
-                    "Error deleting patient: " + e.getMessage(), 
-                    "Database Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-            }
+
+    private void deletePatient() {
+        int row = patientTable.getSelectedRow();
+        if (row == -1) return;
+        int id = (int) tableModel.getValueAt(row, 0);
+        if (JOptionPane.showConfirmDialog(this, "Delete patient?") == JOptionPane.YES_OPTION) {
+            if (patientDAO.deletePatient(id)) loadPatients();
         }
     }
 }
