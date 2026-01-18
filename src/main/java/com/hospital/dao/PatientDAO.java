@@ -9,7 +9,35 @@ import java.util.List;
  * Data Access Object for Patient operations with Pagination support
  */
 public class PatientDAO {
-    
+
+    private void rowMappingHelper(ResultSet rs, Patient patient) throws SQLException {
+        patient.setPatientId(rs.getInt("patient_id"));
+        patient.setName(rs.getString("name"));
+        patient.setAge(rs.getInt("age"));
+        patient.setGender(rs.getString("gender"));
+        patient.setPhone(rs.getString("phone"));
+        patient.setEmail(rs.getString("email"));
+        patient.setAddress(rs.getString("address"));
+        patient.setDisease(rs.getString("disease"));
+        patient.setBloodGroup(rs.getString("blood_group"));
+        patient.setEmergencyContact(rs.getString("emergency_contact"));
+    }
+
+    private void setPatientParameters(PreparedStatement pstmt, Patient patient) throws SQLException {
+        pstmt.setString(1, patient.getName());
+        pstmt.setInt(2, patient.getAge());
+        pstmt.setString(3, patient.getGender());
+        pstmt.setString(4, patient.getPhone());
+        pstmt.setString(5, patient.getEmail());
+        pstmt.setString(6, patient.getAddress());
+        pstmt.setString(7, patient.getDisease());
+        pstmt.setString(8, patient.getBloodGroup());
+        pstmt.setString(9, patient.getEmergencyContact());
+        pstmt.setDate(10, patient.getAdmissionDate() != null ? Date.valueOf(patient.getAdmissionDate())
+                : Date.valueOf(LocalDate.now()));
+
+    }
+
     /**
      * Get a paginated list of patients (New for Pagination)
      */
@@ -54,11 +82,11 @@ public class PatientDAO {
     public List<Patient> getAllPatients() {
         List<Patient> patients = new ArrayList<>();
         String sql = "SELECT * FROM patients ORDER BY patient_id DESC";
-        
+
         try (Connection conn = DatabaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+
             while (rs.next()) {
                 patients.add(extractPatientFromResultSet(rs));
             }
