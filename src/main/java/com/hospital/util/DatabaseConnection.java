@@ -9,7 +9,7 @@ import java.sql.SQLException;
  * Handles MySQL database connections using JDBC
  */
 public class DatabaseConnection {
-    private static final String URL = "jdbc:mysql://localhost:3307/hospital_management";
+    private static final String URL = "jdbc:mysql://localhost:3306/hospital_management";
     private static final String USERNAME = "root";
     private static final String PASSWORD = ""; // Change this to your MySQL password
     private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
