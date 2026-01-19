@@ -100,3 +100,21 @@ INSERT INTO patients (name, age, gender, phone, email, address, disease, blood_g
 ('Carol Davis', 32, 'Female', '8765432107', 'carol.d@email.com', '789 Pine St, City', 'Migraine', 'O+', '8765432106', '2024-02-01'),
 ('David Wilson', 55, 'Male', '8765432106', 'david.w@email.com', '321 Elm St, City', 'Arthritis', 'AB+', '8765432105', '2024-02-10'),
 ('Eva Brown', 29, 'Female', '8765432105', 'eva.brown@email.com', '654 Maple Ave, City', 'Skin Allergy', 'A-', '8765432104', '2024-02-15');
+
+-- Indexes for appointments table (JOIN + ORDER BY optimization)
+CREATE INDEX idx_appointments_patient_id
+    ON appointments(patient_id);
+
+CREATE INDEX idx_appointments_doctor_id
+    ON appointments(doctor_id);
+
+CREATE INDEX idx_appointments_date_time
+    ON appointments(appointment_date, appointment_time);
+
+-- Indexes for patients table (JOIN optimization)
+CREATE INDEX idx_patients_patient_id
+    ON patients(patient_id);
+
+-- Indexes for doctors table (JOIN optimization)
+CREATE INDEX idx_doctors_doctor_id
+    ON doctors(doctor_id);
