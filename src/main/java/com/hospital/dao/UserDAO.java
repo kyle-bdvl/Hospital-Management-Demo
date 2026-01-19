@@ -1,6 +1,7 @@
 package com.hospital.dao;
 
 import com.hospital.model.User;
+import com.hospital.util.AppLogger;
 import com.hospital.util.DatabaseConnection;
 
 import java.sql.*;
@@ -51,7 +52,7 @@ public class UserDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error("UserDAO", "authenticateUser", "Error authenticating user", e);
         }
 
         return null;
@@ -72,7 +73,7 @@ public class UserDAO {
             return result > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error("UserDAO", "addUser", "Error adding user", e);
             return false;
         }
     }
@@ -92,7 +93,7 @@ public class UserDAO {
                 users.add(RowMappingHelper(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error("UserDAO", "getAllUsers", "Error getting all users", e);
         }
         return users;
     }
@@ -113,7 +114,7 @@ public class UserDAO {
             return result > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error("UserDAO", "updateUser", "Error updating user", e);
             return false;
         }
     }
@@ -132,7 +133,7 @@ public class UserDAO {
             return result > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error("UserDAO", "deleteUser", "Error deleting user", e);
             return false;
         }
     }
@@ -154,7 +155,7 @@ public class UserDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error("UserDAO", "usernameExists", "Error checking username", e);
         }
 
         return false;

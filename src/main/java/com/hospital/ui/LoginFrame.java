@@ -1,5 +1,7 @@
 package com.hospital.ui;
 
+import com.hospital.util.AppLogger;
+
 import com.hospital.dao.UserDAO;
 import com.hospital.model.User;
 import com.hospital.util.DatabaseConnection;
@@ -259,7 +261,7 @@ public class LoginFrame extends JFrame {
             JOptionPane.showMessageDialog(this, 
                 "Login failed due to database error: " + ex.getMessage(), 
                 "Database Error", JOptionPane.ERROR_MESSAGE);
-            ex.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", ex);
         } finally {
             setCursor(Cursor.getDefaultCursor());
             loginButton.setEnabled(true);

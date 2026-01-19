@@ -1,5 +1,7 @@
 package com.hospital.ui;
 
+import com.hospital.util.AppLogger;
+
 import com.hospital.dao.DoctorDAO;
 import com.hospital.model.Doctor;
 import com.hospital.model.User;
@@ -167,7 +169,7 @@ public class DoctorManagementFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, 
                     "Error loading doctors: " + e.getMessage(), 
                     "Database Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
+                AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
             }
         });
     }
@@ -210,7 +212,7 @@ public class DoctorManagementFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, 
                     "Error searching doctors: " + e.getMessage(), 
                     "Database Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
+                AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
             }
         });
     }
@@ -236,7 +238,7 @@ public class DoctorManagementFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, 
                     "Error adding doctor: " + e.getMessage(), 
                     "Database Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
+                AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
             }
         }
     }
@@ -278,7 +280,7 @@ public class DoctorManagementFrame extends JFrame {
             JOptionPane.showMessageDialog(this, 
                 "Error editing doctor: " + e.getMessage(), 
                 "Database Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
         }
     }
     
@@ -316,7 +318,7 @@ public class DoctorManagementFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, 
                     "Error deleting doctor: " + e.getMessage(), 
                     "Database Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
+                AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
             }
         }
     }
