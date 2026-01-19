@@ -1,6 +1,7 @@
 package com.hospital.dao;
 
 import com.hospital.model.Patient;
+import com.hospital.util.AppLogger;
 import com.hospital.util.DatabaseConnection;
 import java.sql.*;
 import java.time.LocalDate;
@@ -70,7 +71,7 @@ public class PatientDAO {
                 patients.add(extractPatientFromResultSet(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error("PatientDAO", "getPatientsPaginated", "Error getting paginated patients", e);
         }
         return patients;
     }
@@ -87,7 +88,7 @@ public class PatientDAO {
                 return rs.getInt(1);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error("PatientDAO", "getTotalPatientCount", "Error getting patient count", e);
         }
         return 0;
     }
@@ -107,7 +108,7 @@ public class PatientDAO {
                 patients.add(extractPatientFromResultSet(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error("PatientDAO", "getAllPatients", "Error getting all patients", e);
         }
         return patients;
     }
@@ -125,7 +126,7 @@ public class PatientDAO {
             return pstmt.executeUpdate() > 0;
             
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error("PatientDAO", "addPatient", "Error adding patient", e);
             return false;
         }
     }
@@ -145,7 +146,7 @@ public class PatientDAO {
                 return extractPatientFromResultSet(rs);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error("PatientDAO", "getPatientById", "Error getting patient by ID", e);
         }
         return null;
     }
@@ -165,7 +166,7 @@ public class PatientDAO {
             return pstmt.executeUpdate() > 0;
             
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error("PatientDAO", "updatePatient", "Error updating patient", e);
             return false;
         }
     }
@@ -182,7 +183,7 @@ public class PatientDAO {
             return pstmt.executeUpdate() > 0;
             
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error("PatientDAO", "deletePatient", "Error deleting patient", e);
             return false;
         }
     }
@@ -206,7 +207,7 @@ public class PatientDAO {
                 patients.add(extractPatientFromResultSet(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error("PatientDAO", "searchPatients", "Error searching patients", e);
         }
         return patients;
     }

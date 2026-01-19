@@ -1,5 +1,7 @@
 package com.hospital.ui;
 
+import com.hospital.util.AppLogger;
+
 import com.hospital.model.User;
 import com.hospital.dao.PatientDAO;
 import com.hospital.dao.DoctorDAO;
@@ -345,7 +347,7 @@ public class DashboardFrame extends JFrame {
                 totalDoctorsLabel.setText(String.valueOf(totalDoctors));
                 todayAppointmentsLabel.setText(String.valueOf(todayAppointments));
             } catch (Exception e) {
-                e.printStackTrace();
+                AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
             }
         });
     }

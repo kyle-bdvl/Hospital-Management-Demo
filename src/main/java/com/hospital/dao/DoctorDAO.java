@@ -1,6 +1,7 @@
 package com.hospital.dao;
 
 import com.hospital.model.Doctor;
+import com.hospital.util.AppLogger;
 import com.hospital.util.DatabaseConnection;
 
 import java.sql.*;
@@ -51,7 +52,7 @@ public class DoctorDAO {
             return result > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
             return false;
         }
     }
@@ -74,7 +75,7 @@ public class DoctorDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
         }
 
         return doctors;
@@ -99,7 +100,7 @@ public class DoctorDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
         }
 
         return null;
@@ -123,7 +124,7 @@ public class DoctorDAO {
             return result > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
             return false;
         }
     }
@@ -142,7 +143,7 @@ public class DoctorDAO {
             return result > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
             return false;
         }
     }
@@ -170,7 +171,7 @@ public class DoctorDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
         }
 
         return doctors;
@@ -196,7 +197,7 @@ public class DoctorDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
         }
 
         return doctors;

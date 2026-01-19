@@ -1,5 +1,7 @@
 package com.hospital.dao;
 
+import com.hospital.util.AppLogger;
+
 import com.hospital.model.Appointment;
 import com.hospital.util.DatabaseConnection;
 
@@ -48,7 +50,7 @@ public class AppointmentDAO {
             return result > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
             return false;
         }
     }
@@ -75,7 +77,7 @@ public class AppointmentDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
         }
 
         return appointments;
@@ -104,7 +106,7 @@ public class AppointmentDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
         }
 
         return null;
@@ -132,7 +134,7 @@ public class AppointmentDAO {
             return result > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
             return false;
         }
     }
@@ -151,7 +153,7 @@ public class AppointmentDAO {
             return result > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
             return false;
         }
     }
@@ -170,7 +172,7 @@ public class AppointmentDAO {
             return result > 0;
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
             return false;
         }
     }
@@ -199,7 +201,7 @@ public class AppointmentDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
         }
 
         return appointments;
@@ -229,7 +231,7 @@ public class AppointmentDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
         }
 
         return appointments;
@@ -259,7 +261,7 @@ public class AppointmentDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
         }
 
         return appointments;
@@ -285,7 +287,7 @@ public class AppointmentDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
         }
 
         return false;

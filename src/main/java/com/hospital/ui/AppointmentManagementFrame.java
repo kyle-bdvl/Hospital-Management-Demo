@@ -1,5 +1,7 @@
 package com.hospital.ui;
 
+import com.hospital.util.AppLogger;
+
 import com.hospital.dao.AppointmentDAO;
 import com.hospital.dao.PatientDAO;
 import com.hospital.dao.DoctorDAO;
@@ -190,7 +192,7 @@ public class AppointmentManagementFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, 
                     "Error loading appointments: " + e.getMessage(), 
                     "Database Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
+                AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
             }
         });
     }
@@ -236,7 +238,7 @@ public class AppointmentManagementFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, 
                     "Error searching appointments: " + e.getMessage(), 
                     "Database Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
+                AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
             }
         });
     }
@@ -273,7 +275,7 @@ public class AppointmentManagementFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, 
                     "Error filtering appointments: " + e.getMessage(), 
                     "Database Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
+                AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
             }
         });
     }
@@ -317,14 +319,14 @@ public class AppointmentManagementFrame extends JFrame {
                     JOptionPane.showMessageDialog(this, 
                         "Error booking appointment: " + e.getMessage(), 
                         "Database Error", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
+                    AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
                 }
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, 
                 "Error loading data: " + e.getMessage(), 
                 "Database Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
         }
     }
     
@@ -368,7 +370,7 @@ public class AppointmentManagementFrame extends JFrame {
             JOptionPane.showMessageDialog(this, 
                 "Error editing appointment: " + e.getMessage(), 
                 "Database Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+            AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
         }
     }
     
@@ -407,7 +409,7 @@ public class AppointmentManagementFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, 
                     "Error cancelling appointment: " + e.getMessage(), 
                     "Database Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
+                AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
             }
         }
     }
@@ -447,7 +449,7 @@ public class AppointmentManagementFrame extends JFrame {
                 JOptionPane.showMessageDialog(this, 
                     "Error deleting appointment: " + e.getMessage(), 
                     "Database Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
+                AppLogger.error(getClass().getSimpleName(), "", "Error occurred", e);
             }
         }
     }
