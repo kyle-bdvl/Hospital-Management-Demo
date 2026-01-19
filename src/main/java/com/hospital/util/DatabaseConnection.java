@@ -1,7 +1,5 @@
 package com.hospital.util;
 
-import com.hospital.util.AppLogger;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -22,7 +20,8 @@ public class DatabaseConnection {
         try {
             Class.forName(DRIVER);
         } catch (ClassNotFoundException e) {
-            AppLogger.error("DatabaseConnection", "static", "MySQL JDBC Driver not found!", e);
+            System.err.println("MySQL JDBC Driver not found!");
+            e.printStackTrace();
         }
     }
     
@@ -37,7 +36,8 @@ public class DatabaseConnection {
                 System.out.println("Database connected successfully!");
             }
         } catch (SQLException e) {
-            AppLogger.error("DatabaseConnection", "getConnection", "Failed to connect to database!", e);
+            System.err.println("Failed to connect to database!");
+            e.printStackTrace();
         }
         return connection;
     }
@@ -52,7 +52,8 @@ public class DatabaseConnection {
                 System.out.println("Database connection closed.");
             }
         } catch (SQLException e) {
-            AppLogger.error("DatabaseConnection", "closeConnection", "Error closing database connection!", e);
+            System.err.println("Error closing database connection!");
+            e.printStackTrace();
         }
     }
     
